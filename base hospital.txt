@@ -1,0 +1,44 @@
+create database hospital;
+use hospital;
+create table cargo(id_cargo int primary key auto_increment, nombre varchar(45), descripcion varchar(45));
+create table tipoEmpleado(idTipoEmpleado int primary key auto_increment, nombre varchar(45), descripcion varchar(45));
+create table dependencia(idDependencia int primary key auto_increment, nombre varchar(45), descripcion varchar(45));
+
+create table permiso(idPermiso int primary key auto_increment, nombre varchar(45), descripcion varchar(45));
+create table usuario(idUsuario int primary key auto_increment, login varchar(45), clave varchar(45));
+create table permisosXUsuario(idUsuario int, idPermiso int, primary key(idUsuario, idPermiso), 
+foreign key(idUsuario)references usuario(idUsuario), foreign key(idPermiso) references permiso(idPermiso));
+
+create table tipoTratamiento(idTipoTratamiento int primary key auto_increment, nombre varchar(45), descripcion varchar(45));
+create table historiaClinica(idHistoriaClinica int primary key auto_increment);
+create table tratamiento(idTratamiento int primary key auto_increment, fechaSolicitud datetime, fechaInicio datetime, fechaFinalizacion datetime, obervaciones varchar(45), idHistoriaClinica int, idTipoTratamiento int,
+foreign key(idHistoriaClinica) references historiaClinica(idHistoriaClinica), 
+foreign key(idTipotratamiento) references tipoTratamiento(idTipoTratamiento));
+
+create table persona(idPersona int primary key auto_increment, cedula varchar(12), nombre varchar(45), paterno varchar(45), materno varchar(45),
+fechaNacimiento date, telefono varchar(15), calle varchar(45), numero varchar(25), colonia varchar(45), localidad varchar(45));
+create table empleado(idEmpleado int primary key auto_increment, idPersona int, idCargo int, idTipoEmpleado int, idDependencia int, idUsuario int,
+foreign key(idPersona)references persona(idPersona),
+foreign key(idCargo)references cargo(idCargo),
+foreign key(idTipoEmpleado)references tipoEmpleado(idTipoEmpleado),
+foreign key(idDependencia)references Dependencia(idDependencia),
+foreign key(idUsuario)references Usuario(idUsuario));
+create table paciente(idPaciente int primary key auto_increment, idPersona int, idHistoriaClinica int,
+foreign key(idPersona)references persona(idPersona), foreign key(idHistoriaClinica)references historiaClinica(idHistoriaClinica));
+
+create table tipoExamen(idTipoExamen int primary key auto_increment, nombre varchar(45), descripcion varchar(45));
+create table examen(idExamen int primary key auto_increment, fechaSolicitud datetime, fechaAplicacion datetime, observacion varchar(45), 
+idHistoriaClinica int, idTipoExamen int, foreign key(idHistoriaClinica)references historiaClinica(idHistoriaClinica), 
+foreign key(idTipoExamen)references tipoExamen(idTipoExamen));
+create table resultado(idResultado int primary key auto_increment, fechaEntrega datetime, descripcion varchar(45), documentoAsociado int, idExamen int,
+foreign key(idExamen)references examen(idExamen));
+
+create table factura(idFactura int primary key auto_increment, fechaGeneracion datetime, idPaciente int, foreign key(idPaciente)references paciente(idPaciente));
+create table cuenta(idCuenta int primary key auto_increment, fechaGeneracion datetime, descripcion varchar(45), valor double);
+
+
+create table formaDePago(idFormaDePago int primary key auto_increment, nombre varchar(45), descripcion varchar(45));
+create table pago(idPago int primary key auto_increment, fechaDePago datetime, valor double, idFactura int, idFormaDePago int,foreign key(idFactura)references factura(idFactura), foreign key(idFormaDePago)references formaDePago(idFormaDePago));
+
+
+create table dieta(idDieta int primary key auto_increment, fechaInicio datetime, fechaFinalizacion datetime, contenido varchar(45), descripcion varchar(45), idHistoriaClinica int, foreign key(idHistoriaClinica)references historiaClinica(idHistoriaClinica));
